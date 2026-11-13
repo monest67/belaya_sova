@@ -702,7 +702,7 @@ body.menu-open .mobile-menu {
   background: rgba(23, 23, 45, 0.94);
   -webkit-backdrop-filter: blur(10px);
   backdrop-filter: blur(10px);
-  transform: translateY(110%);
+  transform: translateY(110%);ы
   transition: transform 0.3s ease;
 }
 .mobile-cta.is-visible { transform: translateY(0); }
