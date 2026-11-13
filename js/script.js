@@ -30,21 +30,46 @@
   window.addEventListener('scroll', onScroll, { passive: true });
 
   /* ------------------------------------------------------------------
+       /* ------------------------------------------------------------------
      3. БУРГЕР-МЕНЮ
      ------------------------------------------------------------------ */
+  // Запрещаем браузерному force-dark инвертировать палитру лендинга
+  document.documentElement.style.colorScheme = 'light';
+
   const burger = $('.burger');
   const mobileMenu = $('#mobile-menu');
+
+  // Переносим меню из <header> в <body>: position:fixed всегда считается
+  // от вьюпорта, меню не «зажимается» sticky-шапкой
+  if (mobileMenu && mobileMenu.parentElement !== document.body) {
+    document.body.appendChild(mobileMenu);
+  }
 
   function setMenu(open) {
     document.body.classList.toggle('menu-open', open);
     burger.setAttribute('aria-expanded', String(open));
     burger.setAttribute('aria-label', open ? 'Закрыть меню' : 'Открыть меню');
   }
-  burger.addEventListener('click', () => setMenu(!document.body.classList.contains('menu-open')));
+
+  burger.addEventListener('click', () => {
+    setMenu(!document.body.classList.contains('menu-open'));
+  });
+
+  // Закрытие по любой ссылке меню (навигация, телефон, CTA)
   $$('#mobile-menu a').forEach((a) => a.addEventListener('click', () => setMenu(false)));
+
+  // Закрытие по Escape
   document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape' && document.body.classList.contains('menu-open')) setMenu(false);
   });
+
+  // Закрытие по клику вне меню (бургер не учитываем)
+  document.addEventListener('click', (e) => {
+    if (!document.body.classList.contains('menu-open')) return;
+    if (mobileMenu.contains(e.target) || burger.contains(e.target)) return;
+    setMenu(false);
+  });
+
   window.addEventListener('resize', () => {
     if (window.innerWidth >= 1024 && document.body.classList.contains('menu-open')) setMenu(false);
   });
